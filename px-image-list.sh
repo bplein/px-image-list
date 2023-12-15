@@ -60,8 +60,8 @@ undeclared_list=$(echo "$aglist"| awk -F'/' 'NF==2' | awk '{print "docker.io/" $
 undeclared_list+=$(echo "$cmlist"| awk -F'/' 'NF==2'| awk '{print "docker.io/" $0}')
 
 # concatenate the list
-final_list=$(echo "$declared_list")$'\n'
-final_list+=$(echo "$undeclared_list")
+final_list="$declared_list"$'\n'
+final_list+="$undeclared_list"
 
 # Sort, and remove duplicates
 echo "$final_list" | sort | awk '!seen[$0]++'
