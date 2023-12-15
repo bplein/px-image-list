@@ -3,8 +3,8 @@
 
 
 ```
-Usage: $0 -k (Kubernetes Version) -p (Portworx Version)
-example: $0 -k 1.24.1 -p 3.0.4
+Usage: px-image-list.sh -k (Kubernetes Version) -p (Portworx Version)
+example: px-image-list.sh -k 1.24.1 -p 3.0.4
 
 OPTIONS:
    -h      Show this message
