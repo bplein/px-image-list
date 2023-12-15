@@ -49,11 +49,13 @@ aglist=$(curl -sL "https://install.portworx.com/${pxver}/air-gapped?kbver=${kbve
 # Get the configmap image list
 cmlist=$(curl -sL "https://install.portworx.com/${pxver}/version?kbver=${kbver}" | sed "1,2d" | awk '{print $2}')
 
-# Load all images with declarative repositories into the a variable
+# Load all images with declarative repositories into the a variable. 
+# These have 3 fields, i.e. registry/namespace/image
 declared_list=$(echo "$aglist"| awk -F'/' 'NF==3')$'\n'
 declared_list+=$(echo "$cmlist"| awk -F'/' 'NF==3')
 # Load all images without declarative repositories into the a variable (i.e. undeclared default to docker.io)
-# and patch them up for consistent declaration of the docker.io repository
+# These have only 2 fields, i.e namespace/image, and container engines default back to docker.io as the registry.
+# Patch them up for consistent declaration of the docker.io repository
 undeclared_list=$(echo "$aglist"| awk -F'/' 'NF==2' | awk '{print "docker.io/" $0}')$'\n'
 undeclared_list+=$(echo "$cmlist"| awk -F'/' 'NF==2'| awk '{print "docker.io/" $0}')
 
