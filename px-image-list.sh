@@ -56,12 +56,18 @@ declared_list+=$(echo "$cmlist"| awk -F'/' 'NF==3')
 # Load all images without declarative repositories into the a variable (i.e. undeclared default to docker.io)
 # These have only 2 fields, i.e namespace/image, and container engines default back to docker.io as the registry.
 # Patch them up for consistent declaration of the docker.io repository
-undeclared_list=$(echo "$aglist"| awk -F'/' 'NF==2' | awk '{print "docker.io/" $0}')$'\n'
-undeclared_list+=$(echo "$cmlist"| awk -F'/' 'NF==2'| awk '{print "docker.io/" $0}')
+#undeclared_list=$(echo "$aglist"| awk -F'/' 'NF==2' | awk '{print "docker.io/" $0}')$'\n'
+#undeclared_list+=$(echo "$cmlist"| awk -F'/' 'NF==2'| awk '{print "docker.io/" $0}')
+undeclared_list=$(echo "$aglist" | awk -F'/' 'NF==2 && $0 !~ /^registry\.k8s\.io/ {print "docker.io/" $0}')$'\n'
+undeclared_list+=$(echo "$cmlist" | awk -F'/' 'NF==2 && $0 !~ /^registry\.k8s\.io/ {print "docker.io/" $0}')$'\n'
+# Add lines starting with registry.k8s.io as-is
+undeclared_list+=$(echo "$aglist" | awk -F'/' 'NF==2 && $0 ~ /^registry\.k8s\.io/')$'\n'
+undeclared_list+=$(echo "$cmlist" | awk -F'/' 'NF==2 && $0 ~ /^registry\.k8s\.io/')
 
 # concatenate the list
 final_list="$declared_list"$'\n'
 final_list+="$undeclared_list"
 
+
 # Sort, and remove duplicates
-echo "$final_list" | sort | awk '!seen[$0]++'
+echo "$final_list" | grep -v '^[[:space:]]*$' | sort | awk '!seen[$0]++'
